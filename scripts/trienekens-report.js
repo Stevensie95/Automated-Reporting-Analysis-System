@@ -645,6 +645,15 @@ app.controller('editReportController', function($scope, $http, $routeParams, $wi
     };
     $scope.truckList = [];
     $scope.driverList = [];
+
+    $scope.circleID = 0;
+    $scope.rectangleID = 0;
+    $scope.shape = 'circle';
+    var centerArray = [], rectArray = [];
+
+    angular.element('.btnShape').click(function () {
+        $scope.shape = angular.element(this).data('shape');
+    });
     
 //    $scope.editField = {
 //        "collectionDate" : "",
@@ -686,12 +695,88 @@ app.controller('editReportController', function($scope, $http, $routeParams, $wi
             map.panTo(new google.maps.LatLng($scope.editField.lat, $scope.editField.lng));
             map.setZoom(17);
         }, 1000);
+        
+        // OnClick add Marker and get address
+        google.maps.event.addListener(map, "click", function (e) {
+            var latLng, latitude, longtitude, circle, rectangle;
+
+            latLng = e.latLng;
+            latitude = latLng.lat();
+            longtitude = latLng.lng();
+
+            if ($scope.shape == "circle") {
+                $scope.circleID++;
+                circle = new google.maps.Circle({
+                    id: $scope.circleID,
+                    map: map,
+                    center: new google.maps.LatLng(latitude, longtitude),
+                    radius: 200,
+                    fillColor: 'transparent',
+                    strokeColor: 'red',
+                    editable: true,
+                    draggable: true
+                });
+                centerArray.push({"lat": circle.getCenter().lat(), "lng": circle.getCenter().lng(), "radius": circle.getRadius()});
+
+                google.maps.event.addListener(circle, "radius_changed", function () {
+                    $.each(centerArray, function (index, value) {
+                        if (circle.id == (index + 1)) {
+                            centerArray[index].radius = circle.getRadius();
+                        }
+                    });
+                });
+                google.maps.event.addListener(circle, "center_changed", function () {
+                    $.each(centerArray, function (index, value) {
+                        if (circle.id == (index + 1)) {
+                            centerArray[index].lat = circle.getCenter().lat();
+                            centerArray[index].lng = circle.getCenter().lng();
+                        }
+                    });
+                });
+            } else if ($scope.shape == "rectangle") {
+                $scope.rectangleID++;
+                rectangle = new google.maps.Rectangle({
+                    id: $scope.rectangleID,
+                    strokeColor: '#FF0000',
+                    strokeWeight: 2,
+                    fillColor: 'transparent',
+                    map: map,
+                    editable: true,
+                    draggable: true,
+                    center: new google.maps.LatLng(latitude, longtitude),
+                    bounds: new google.maps.LatLngBounds (
+                        new google.maps.LatLng (latitude, longtitude),
+                        new google.maps.LatLng (latitude+0.001, longtitude+0.001),
+                    )
+                });
+                rectArray.push({"neLat": rectangle.getBounds().getNorthEast().lat(), "neLng": rectangle.getBounds().getNorthEast().lng(), "swLat": rectangle.getBounds().getSouthWest().lat(), "swLng": rectangle.getBounds().getSouthWest().lng()});
+
+                google.maps.event.addListener(rectangle, "bounds_changed", function () {
+                    var bounds =  rectangle.getBounds();
+                    var ne = bounds.getNorthEast();
+                    var sw = bounds.getSouthWest();
+                    $.each(rectArray, function (index, value) {
+                        if (rectangle.id == (index + 1)) {
+                            rectArray[index].neLat = ne.lat();
+                            rectArray[index].neLng = ne.lng();
+                            rectArray[index].swLat = sw.lat();
+                            rectArray[index].swLng = sw.lng();
+                        }
+                    });
+                });
+            }
+            
+            console.log(centerArray);
+            console.log(rectArray);
+        });
 
         $http.post('/getReportCircle', $scope.reportObj).then(function (response) {
             var data = response.data;
             $window.setTimeout(function () {
             $.each(data, function (index, value) {
+                $scope.circleID++;
                 var circle = new google.maps.Circle({
+                    id: $scope.circleID,
                     map: map,
                     center: new google.maps.LatLng(data[index].lat, data[index].lng),
                     radius: parseFloat(data[index].radius),
@@ -700,29 +785,66 @@ app.controller('editReportController', function($scope, $http, $routeParams, $wi
                     editable: true,
                     draggable: true
                 });
+                centerArray.push({"lat": circle.getCenter().lat(), "lng": circle.getCenter().lng(), "radius": circle.getRadius()});
+                
+                google.maps.event.addListener(circle, "radius_changed", function () {
+                    $.each(centerArray, function (index, value) {
+                        if (circle.id == (index + 1)) {
+                            centerArray[index].radius = circle.getRadius();
+                        }
+                    });
+                });
+                google.maps.event.addListener(circle, "center_changed", function () {
+                    $.each(centerArray, function (index, value) {
+                        if (circle.id == (index + 1)) {
+                            centerArray[index].lat = circle.getCenter().lat();
+                            centerArray[index].lng = circle.getCenter().lng();
+                        }
+                    });
+                });
             });
             }, 1000);
 
         });
         
-//        $http.post('/getReportRect', $scope.report).then(function (response) {
-//            var data = response.data;
-//            $window.setTimeout(function () {
-//                $.each(data, function(index, value) {
-//                    var rect = new google.maps.Rectangle({
-//                        map: map,
-//                        bounds: new google.maps.LatLngBounds (
-//                            new google.maps.LatLng (data[index].swLat, data[index].swLng),
-//                            new google.maps.LatLng (data[index].neLat, data[index].neLng),
-//                        ),
-//                        fillColor: 'transparent',
-//                        strokeColor: 'red',
-//                        editable: false,
-//                        draggable: false
-//                    });
-//                })
-//            }, 1000);
-//        });        
+        $http.post('/getReportRect', $scope.reportObj).then(function (response) {
+            var data = response.data;
+            console.log(response.data);
+            $window.setTimeout(function () {
+                $.each(data, function(index, value) {
+                    $scope.rectangleID++;
+                    var rectangle = new google.maps.Rectangle({
+                        id: $scope.rectangleID,
+                        map: map,
+                        center: new google.maps.LatLng(data[index].lat, data[index].lng),
+                        bounds: new google.maps.LatLngBounds (
+                            new google.maps.LatLng (data[index].swLat, data[index].swLng),
+                            new google.maps.LatLng (data[index].neLat, data[index].neLng),
+                        ),
+                        fillColor: 'transparent',
+                        strokeColor: 'red',
+                        strokeWeight: 2,
+                        editable: true,
+                        draggable: true
+                    });
+                    rectArray.push({"neLat": rectangle.getBounds().getNorthEast().lat(), "neLng": rectangle.getBounds().getNorthEast().lng(), "swLat": rectangle.getBounds().getSouthWest().lat(), "swLng": rectangle.getBounds().getSouthWest().lng()});
+
+                    google.maps.event.addListener(rectangle, "bounds_changed", function () {
+                        var bounds =  rectangle.getBounds();
+                        var ne = bounds.getNorthEast();
+                        var sw = bounds.getSouthWest();
+                        $.each(rectArray, function (index, value) {
+                            if (rectangle.id == (index + 1)) {
+                                rectArray[index].neLat = ne.lat();
+                                rectArray[index].neLng = ne.lng();
+                                rectArray[index].swLat = sw.lat();
+                                rectArray[index].swLng = sw.lng();
+                            }
+                        });
+                    });
+                })
+            }, 1000);
+        });        
         
     });
     
@@ -733,6 +855,51 @@ app.controller('editReportController', function($scope, $http, $routeParams, $wi
     
     $http.get('/getDriverList').then(function (response) {
         $scope.driverList = response.data;
-    });  
+    });
     
+    $scope.edit = function(){
+        $scope.editField.marker = centerArray;
+        $scope.editField.rectangle = rectArray;
+        
+        $http.post('/editReport',$scope.editField).then(function(response){
+            var returnedReportData = response.data;   
+            
+            if (returnedReportData.status === "success") {
+//                angular.element('body').overhang({
+//                    type: "success",
+//                    message: "Report edit successfully!"
+//                });
+            }
+            else{
+
+            }
+        });
+        
+        $http.post('/editReportCircle',$scope.editField).then(function(response){
+            var returnedReportData = response.data;   
+            
+            if (returnedReportData.status === "success") {
+
+            }
+            else{
+
+            }            
+        });
+        
+        $http.post('/editReportRect',$scope.editField).then(function(response){
+            var returnedReportData = response.data;   
+            
+            if (returnedReportData.status === "success") {
+
+            }
+            else{
+
+            }
+        });       
+        
+        window.location.href = '#/reporting';
+        
+              
+    };
+ 
 });

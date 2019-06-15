@@ -794,6 +794,35 @@ app.post('/addReport',function(req,res){
         });
     }, 100);
 }); // Complete
+
+app.post('/editReport',function(req,res){
+    'use strict';
+    
+    var sql = "UPDATE tblreport SET reportCollectionDate = '" + req.body.date + "', operationTimeStart = '" + req.body.startTime + "', operationTimeEnd = '" + req.body.endTime + "', garbageAmount = '" + req.body.ton + "', iFleetImg = '"+ req.body.ifleet + "', lng = '" + req.body.lng + "', lat = '" + req.body.lat + "', reportStatus = '" + req.body.status + "', truckID = '" + req.body.truckID + "', driverID = '" + req.body.driverID + "', remark = '" + req.body.remark + "' WHERE reportID = '" + req.body.id + "'"
+    
+    db.query(sql, function (err, result) {
+        if (err) {
+            res.json({"status": "error", "message": "Something wrong!"});
+            throw err;
+        }
+        res.json({"status": "success", "message": "report edited!"});
+    });
+});
+
+app.post('/editReportCircle',function(req,res){
+    'use strict';
+    
+    var sql = "";
+    res.json({"status": "success", "message": "report edited!"});
+});
+
+app.post('/editReportRect',function(req,res){
+    'use strict';
+    
+    var sql = "";
+    res.json({"status": "success", "message": "report edited!"});
+});
+
 app.post('/getReport', function(req, res){
     'use strict';
     console.log(req.body);
