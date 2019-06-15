@@ -1,3 +1,12 @@
+<style>
+    *{
+        -webkit-transition-property: none!important;
+        transition-property: none!important;
+        /* These doesn't affect anything, but, just in case. */
+        -webkit-animation: none!important;
+        animation: none!important;
+    }
+</style>
 <div class="row">
     <div class="col-md-10"></div>
     <div class="col=md-1">
@@ -58,8 +67,9 @@
         <div class="col-md-6" style="width: 50%">
             <img id="myImg" src="{{thisReport.ifleet}}" style="width:650px; height: 650px;" />
         </div>
-        <div class="col-md-6" style="width: 50%" data-html2canvas-ignore="true">
+        <div class="col-md-6" style="width: 50%">
             <div id="googleMap" style="min-height: 650px; min-width: 650px;"></div>
+<!--            <img class="googleMap" src="" />-->
         </div>
     </div>
 </div>
@@ -81,6 +91,7 @@
         const filename = 'ThisIsYourPDFFilename.pdf';
 
         html2canvas(document.querySelector('#nodeToRenderAsPDF'), {
+            useCORS: true,
             scale: quality
         }).then(canvas => {
             let pdf = new jsPDF('l', 'mm', 'a4');
