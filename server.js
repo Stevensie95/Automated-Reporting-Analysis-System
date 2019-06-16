@@ -1063,8 +1063,8 @@ app.get('/getReportIncompleteCount',function(req,res){
     });
 
 });
-/* Emitter Registered */
 
+/* Emitter Registered */
 // Create Database Tables
 emitter.on('createTable', function () {
     'use strict';
@@ -1202,7 +1202,7 @@ var db = mysql.createConnection({
     password: DB_PASS
 });
 
-//// Connect
+// Connect
 db.connect(function (err) {
     'use strict';
     if (err) {
