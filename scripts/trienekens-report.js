@@ -278,7 +278,7 @@ app.controller('dailyController', function ($scope, $window, $routeParams, $http
                     type: "success",
                     message: "Report added successfully!"
                 });
-                socket.emit('make report', {"reportID": newReportID});
+                socket.emit('make report', {"reportID": newReportID, "owner": $window.sessionStorage.getItem("owner")});
                 window.location.href = '#/reporting';
             }
         });

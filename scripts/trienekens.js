@@ -22,9 +22,9 @@ socket.on('connect', function () {
         Lobibox.notify('info', {
             pauseDelayOnHover: true,
             continueDelayOnInactiveTab: false,
-            title: 'This is title',
-            msg: 'Received a new report ' + data.id,
-            img: 'https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_1280.png'
+            title: 'Daily Report',
+            msg: data.name + ' have submitted a new report ' + data.id,
+            img: data.avatar
         });
     });
 });

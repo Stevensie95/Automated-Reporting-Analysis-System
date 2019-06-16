@@ -1293,8 +1293,20 @@ io.sockets.on('connection', function(socket) {
     });
     
     socket.on('make report', function (data) {
-        io.sockets.in(roomManager).emit('receive report notification', {
-            id: data.reportID
+        var sql = "SELECT staffName AS name, staffPic AS avatar FROM tblstaff WHERE staffID = '" + data.owner + "' LIMIT 0, 1";
+        
+        db.query(sql, function (err, result) {
+            if (err) {
+                throw err;
+            }
+            if (result[0].avatar == "") {
+                result[0].avatar = "https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_1280.png";
+            }
+            io.sockets.in(roomManager).emit('receive report notification', {
+                id: data.reportID,
+                name: result[0].name,
+                avatar: result[0].avatar
+            });
         });
     });
     
