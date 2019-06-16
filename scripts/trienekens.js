@@ -13,6 +13,20 @@ socket.on('connect', function () {
         "user": window.sessionStorage.getItem('owner'),
         "position": window.sessionStorage.getItem('position')
     });
+    
+    if (window.sessionStorage.getItem('position') == "Manager") {
+        socket.emit('room', "manager");
+    }
+    
+    socket.on('receive report notification', function (data) {
+        Lobibox.notify('info', {
+            pauseDelayOnHover: true,
+            continueDelayOnInactiveTab: false,
+            title: 'This is title',
+            msg: 'Received a new report ' + data.id,
+            img: 'https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_1280.png'
+        });
+    });
 });
 
 /*

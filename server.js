@@ -38,6 +38,7 @@ app.use(express.static(path.join(__dirname, 'scripts')));
 app.use(express.static(path.join(__dirname, 'pages')));
 app.use(express.static(path.join(__dirname, 'fonts')));
 app.use(express.static(path.join(__dirname, 'images')));
+app.use(express.static(path.join(__dirname, 'sounds')));
 
 //app.route('/').get(function (req, res) {
 //    'use strict';
@@ -798,7 +799,7 @@ app.post('/addReport',function(req,res){
 app.post('/editReport',function(req,res){
     'use strict';
     
-    var sql = "UPDATE tblreport SET reportCollectionDate = '" + req.body.date + "', operationTimeStart = '" + req.body.startTime + "', operationTimeEnd = '" + req.body.endTime + "', garbageAmount = '" + req.body.ton + "', iFleetImg = '"+ req.body.ifleet + "', lng = '" + req.body.lng + "', lat = '" + req.body.lat + "', reportStatus = '" + req.body.status + "', truckID = '" + req.body.truckID + "', driverID = '" + req.body.driverID + "', remark = '" + req.body.remark + "' WHERE reportID = '" + req.body.id + "'"
+    var sql = "UPDATE tblreport SET reportCollectionDate = '" + req.body.date + "', operationTimeStart = '" + req.body.startTime + "', operationTimeEnd = '" + req.body.endTime + "', garbageAmount = '" + req.body.ton + "', iFleetImg = '"+ req.body.ifleet + "', lng = '" + req.body.lng + "', lat = '" + req.body.lat + "', reportStatus = '" + req.body.status + "', truckID = '" + req.body.truckID + "', driverID = '" + req.body.driverID + "', remark = '" + req.body.remark + "' WHERE reportID = '" + req.body.id + "'";
     
     db.query(sql, function (err, result) {
         if (err) {
@@ -1237,6 +1238,7 @@ Array.prototype.pushIfNotExist = function(element, comparer) {
 };
 //------------------------------------------------------------------------------------------
 
+var roomManager = "manager";
 
 io.sockets.on('connection', function(socket) {
     connections.push(socket);
@@ -1256,6 +1258,17 @@ io.sockets.on('connection', function(socket) {
         });
         console.log(connectedUserList);
     });
+    
+    socket.on('room', function (room) {
+        socket.join(room);
+    });
+    
+    socket.on('make report', function (data) {
+        io.sockets.in(roomManager).emit('receive report notification', {
+            id: data.reportID
+        });
+    });
+    
     
     //Send Message
     socket.on('send message', function(data) {
