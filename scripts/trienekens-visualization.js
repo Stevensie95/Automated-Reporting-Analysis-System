@@ -236,58 +236,58 @@ app.controller('visualizationController', function ($scope, $http, $window, $fil
     getDataVisualization();
     //chart-line-duration-garbage
     var displayChart = function () {
-        Highcharts.chart('chart-line-duration-garbage', {
-
-            title: {
-                text: 'Areas Collection Duration'
-            },
-
-            subtitle: {
-                text: 'Trienekens'
-            },
-            xAxis: {
-                categories: getElementList("reportCollectionDate", $scope.reportList)
-            },
-            yAxis: {
-                title: {
-                    text: 'Duration in Minutes'
-                }
-            },
-            legend: {
-                layout: 'vertical',
-                align: 'right',
-                verticalAlign: 'middle'
-            },
-            tooltip: {
-                pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
-                    '<td style="padding:0"><b>{point.y} minutes</b></td></tr>'
-            },
-            plotOptions: {
-                series: {
-                    label: {
-                        connectorAllowed: false
-                    }
-                }
-            },
-
-            series: getElementList("area & duration", $scope.reportList),
-
-            responsive: {
-                rules: [{
-                    condition: {
-                        maxWidth: 500
-                    },
-                    chartOptions: {
-                        legend: {
-                            layout: 'horizontal',
-                            align: 'center',
-                            verticalAlign: 'bottom'
-                        }
-                    }
-        }]
-            }
-
-        });
+//        Highcharts.chart('chart-line-duration-garbage', {
+//
+//            title: {
+//                text: 'Areas Collection Duration'
+//            },
+//
+//            subtitle: {
+//                text: 'Trienekens'
+//            },
+//            xAxis: {
+//                categories: getElementList("reportCollectionDate", $scope.reportList)
+//            },
+//            yAxis: {
+//                title: {
+//                    text: 'Duration in Minutes'
+//                }
+//            },
+//            legend: {
+//                layout: 'vertical',
+//                align: 'right',
+//                verticalAlign: 'middle'
+//            },
+//            tooltip: {
+//                pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+//                    '<td style="padding:0"><b>{point.y} minutes</b></td></tr>'
+//            },
+//            plotOptions: {
+//                series: {
+//                    label: {
+//                        connectorAllowed: false
+//                    }
+//                }
+//            },
+//
+//            series: getElementList("area & duration", $scope.reportList),
+//
+//            responsive: {
+//                rules: [{
+//                    condition: {
+//                        maxWidth: 500
+//                    },
+//                    chartOptions: {
+//                        legend: {
+//                            layout: 'horizontal',
+//                            align: 'center',
+//                            verticalAlign: 'bottom'
+//                        }
+//                    }
+//        }]
+//            }
+//
+//        });
 
         //chart-bar-duration-garbage
         Highcharts.chart('chart-bar-duration-garbage', {
