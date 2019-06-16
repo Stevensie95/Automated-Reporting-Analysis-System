@@ -801,27 +801,56 @@ app.post('/editReport',function(req,res){
     
     var sql = "UPDATE tblreport SET reportCollectionDate = '" + req.body.date + "', operationTimeStart = '" + req.body.startTime + "', operationTimeEnd = '" + req.body.endTime + "', garbageAmount = '" + req.body.ton + "', iFleetImg = '"+ req.body.ifleet + "', lng = '" + req.body.lng + "', lat = '" + req.body.lat + "', reportStatus = '" + req.body.status + "', truckID = '" + req.body.truckID + "', driverID = '" + req.body.driverID + "', remark = '" + req.body.remark + "' WHERE reportID = '" + req.body.id + "'";
     
+    var i = 0, j = 0;
+    
     db.query(sql, function (err, result) {
         if (err) {
             res.json({"status": "error", "message": "Something wrong!"});
             throw err;
         }
+
+        if (Object.keys(req.body.marker).length > 0) {
+            var dltCircleSQL = "DELETE FROM tblmapcircle WHERE reportID = '" + req.body.id + "'";
+            
+            db.query(dltCircleSQL, function (err, result) {
+                if (err) {
+                    throw err;
+                }
+            });           
+            
+            
+            for (i = 0; i < Object.keys(req.body.marker).length; i++) {
+                var circleSQL = "INSERT INTO tblmapcircle (radius, lng, lat, reportID) VALUE ('" + req.body.marker[i].radius + "', '" + req.body.marker[i].lng + "', '" + req.body.marker[i].lat + "', '" + req.body.id + "')";
+
+                db.query(circleSQL, function (err, result) {
+                    if (err) {
+                        throw err;
+                    }
+                });
+            }
+        }
+        if (Object.keys(req.body.rectangle).length > 0) {
+            
+            var dltRectSQL = "DELETE FROM tblmaprect WHERE reportID = '" + req.body.id + "'";
+            
+            db.query(dltRectSQL, function (err, result) {
+                if (err) {
+                    throw err;
+                }
+            }); 
+            
+            for (j = 0; j < Object.keys(req.body.rectangle).length; j++) {
+                var rectSQL = "INSERT INTO tblmaprect (neLat, neLng, swLat, swLng, reportID) VALUE ('" + req.body.rectangle[j].neLat + "', '" + req.body.rectangle[j].neLng + "', '" + req.body.rectangle[j].swLat + "', '" + req.body.rectangle[j].swLng + "', '" + req.body.id + "')";
+
+                db.query(rectSQL, function (err, result) {
+                    if (err) {
+                        throw err;
+                    }
+                });
+            }
+        }        
         res.json({"status": "success", "message": "report edited!"});
     });
-});
-
-app.post('/editReportCircle',function(req,res){
-    'use strict';
-    
-    var sql = "";
-    res.json({"status": "success", "message": "report edited!"});
-});
-
-app.post('/editReportRect',function(req,res){
-    'use strict';
-    
-    var sql = "";
-    res.json({"status": "success", "message": "report edited!"});
 });
 
 app.post('/getReport', function(req, res){

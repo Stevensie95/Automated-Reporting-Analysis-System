@@ -866,39 +866,13 @@ app.controller('editReportController', function($scope, $http, $routeParams, $wi
             var returnedReportData = response.data;   
             
             if (returnedReportData.status === "success") {
-//                angular.element('body').overhang({
-//                    type: "success",
-//                    message: "Report edit successfully!"
-//                });
-            }
-            else{
-
+                angular.element('body').overhang({
+                    type: "success",
+                    message: "Report edit successfully!"
+                });
+                window.location.href = '#/reporting';
             }
         });
-        
-        $http.post('/editReportCircle',$scope.editField).then(function(response){
-            var returnedReportData = response.data;   
-            
-            if (returnedReportData.status === "success") {
-
-            }
-            else{
-
-            }            
-        });
-        
-        $http.post('/editReportRect',$scope.editField).then(function(response){
-            var returnedReportData = response.data;   
-            
-            if (returnedReportData.status === "success") {
-
-            }
-            else{
-
-            }
-        });       
-        
-        window.location.href = '#/reporting';
         
               
     };
